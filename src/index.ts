@@ -5,17 +5,19 @@ import { AppContainer } from 'react-hot-loader';
 import App from './App';
 import './styles/index.css';
 
-const render = (Root, props: { app: App }, container = document.getElementById('App')) => {
+const render = (root: typeof Root, props: { app: App }, container = document.getElementById('App')) => {
   ReactDOM.render(
-    React.createElement(AppContainer, {}, React.createElement(Root, props)),
+    React.createElement(AppContainer, {}, React.createElement(root, props)),
     container,
   );
-}
+};
 
 // reference to current app instance
 let props = {
   app: new App()
 };
+
+(window as any).props = props;
 
 render(Root, props);
 

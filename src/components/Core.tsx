@@ -1,7 +1,7 @@
 import * as   React from 'react';
 import * as styles from './styles.css';
 import Link from './Link';
-import mobx from './mobx.png';
+import { defaultRoute, routes } from '../routes';
 
 /**
  * <Core />
@@ -10,17 +10,15 @@ import mobx from './mobx.png';
  * of our application.
  */
 
-const Core = ({ children }) =>
-  <div>
-    <div><img width={50} height={50} src={mobx} /></div>
-    <nav>
-      <Link href="/">Home</Link>
-      <Link href='/about'>About</Link>
-      <Link href='/users'>Users</Link>
-    </nav>
-    <main className={styles.scopedClassName}>
-      {children}
-    </main>
-  </div>;
+const Core = ({ children }: { children: JSX.Element }) =>
+    <div>
+        <header className={styles.header}>
+            <Link href={defaultRoute.route}>{defaultRoute.name}</Link>
+            {routes.map(r => <Link key={r.route} href={r.route}>{r.name}</Link>)}
+        </header>
+        <main className={styles.main}>
+            {children}
+        </main>
+    </div>;
 
 export default Core;

@@ -1,4 +1,59 @@
-.scopedClassName {
-    color: blue;
+.side {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.left {
+    composes: side;
+    width: 23vw;
+    max-height: 100vh;
+    position: fixed;
+    overflow-y: scroll;
+    left: 0;
+    top: 30px;
+}
+
+.right {
+    composes: side;
+    margin-left: 23vw;
+    width: 76vw;
+}
+
+.home {
     font-family: arial;
+    table {
+        border-spacing: 0px;
+    }
+}
+
+.row {
+    cursor: pointer;
+    &:hover {
+        background: #ececec;
+    }
+    td {
+        padding: 5px 10px;
+    }
+}
+
+.favorite {
+    background: #d4ffce;
+    &:hover {
+        background: #dff2dc;
+    }
+}
+
+.main {
+    margin-top: 30px;
+}
+
+.header {
+    height: 30px;
+    line-height: 30px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    a {
+        margin: 0 10px;
+    }
 }

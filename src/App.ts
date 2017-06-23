@@ -11,7 +11,7 @@ const hasWindow = typeof window !== 'undefined';
 // need to edit this code yourself at all.
 class App {
   // the main element we're rendering, this reacts to route changes (MobX).
-  @observable route: React.ReactElement<any> = null;
+  @observable route: null | React.ReactElement<any> = null;
   // our main app state, this is available in your router
   @observable appState: AppState;
   // our router
@@ -19,7 +19,7 @@ class App {
 
   constructor(appState?: AppStateProps, router?: Router<Route>) {
 
-    // we optionally reload the state useful for hot reload and server-side rendering, 
+    // we optionally reload the state useful for hot reload and server-side rendering,
     // but also as an extension point for restoring the data from localStorage.
     this.appState = new AppState().reload(appState);
 
@@ -34,7 +34,7 @@ class App {
     this.hookHistory();
   }
 
-  @action setRoute = (component) => {
+  @action setRoute = (component: JSX.Element) => {
     this.route = component;
   }
 
@@ -55,16 +55,16 @@ class App {
     this.updateLocation();
 
     this.pushState = history.pushState;
-    history.pushState = (...args) => {
+    history.pushState = (...args: any[]) => {
       this.pushState.apply(history, args);
       this.updateLocation();
-    }
+    };
 
     this.replaceState = history.replaceState;
-    history.replaceState = (...args) => {
+    history.replaceState = (...args: any[]) => {
       this.replaceState.apply(history, args);
       this.updateLocation();
-    }
+    };
 
     this.onpopstate = window.onpopstate;
     window.onpopstate = (e: PopStateEvent) => {

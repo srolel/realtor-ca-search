@@ -1,20 +1,25 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2015",
     "module": "es2015",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
+    "noUnusedLocals": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
     "sourceMap": true,
     "noEmit": true,
     "jsx": "react",
     "noEmitHelpers": true,
     "importHelpers": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "lib": [
       "dom",
-      "es6"
+      "es2015",
+      "es2016"
     ],
     "typeRoots": [
       "node_modules/@types"

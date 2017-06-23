@@ -14,8 +14,7 @@ module.exports = env => {
     entry: {
       app: removeEmpty([
         ifDev('react-hot-loader/patch'),
-        ifDev(`webpack-dev-server/client?http://localhost:3000`),
-        ifDev('webpack/hot/only-dev-server'),
+        ifDev(`webpack-hot-middleware/client?http://localhost:3000/`),
         path.join(__dirname, '../src/index.ts')
       ]),
       vendor: ['react', 'react-dom', 'mobx', 'mobx-react', 'tslib'],
@@ -50,7 +49,12 @@ module.exports = env => {
             ? [
               'style-loader',
               'css-loader?modules=true&minimize&-autoprefixer',
-              'postcss-loader'
+              {
+                loader: 'postcss-loader',
+                options: {
+                  plugins: loader => [require('postcss-nested')]
+                }
+              }
             ]
             : ExtractTextPlugin.extract({ fallback: 'style-loader', loader: 'css-loader?modules=true&minimize&-autoprefixer!postcss-loader' }),
         },
