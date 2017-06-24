@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-const pushState = (url?: string) => (e: React.MouseEvent<any>) => {
+export const pushState = (url?: string) => (e: React.MouseEvent<any>) => {
   e.preventDefault();
   history.pushState(null, '', url);
 };

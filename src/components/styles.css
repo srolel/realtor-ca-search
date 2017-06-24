@@ -6,7 +6,7 @@
 .left {
     composes: side;
     width: 23vw;
-    max-height: 100vh;
+    max-height: calc(100vh - 30px);
     position: fixed;
     overflow-y: scroll;
     left: 0;
@@ -72,4 +72,8 @@
 
 .pageLink {
     margin: 0 5px;
+}
+
+.listingImage {
+    width: 150px;
 }

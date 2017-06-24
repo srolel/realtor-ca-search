@@ -16,6 +16,7 @@ class AppState implements AppStateProps {
   @observable searched = '';
   @observable query: Query<Listing> | null = null;
   @observable favorites: string[] = [];
+  @observable viewedListing: Listing | null = null;
 
   getSearchResults(arr: Listing[]) {
     return this.query
@@ -114,6 +115,14 @@ class AppState implements AppStateProps {
 
   unload() {
     if (this.disposer) this.disposer();
+  }
+
+  @action viewListing(listing: Listing) {
+    this.viewedListing = listing;
+  }
+
+  @action clearViewedListing() {
+    this.viewedListing = null;
   }
 }
 

@@ -1,16 +1,20 @@
 import * as React from 'react';
 import AppState from '../stores/AppState';
+import { Listing } from '../stores/types';
 import * as styles from './styles.css';
 import { Map } from './Map';
 import Pagination from './Pagination';
 
+
 export abstract class Listings extends React.Component<{ appState: AppState, params: { page: string } }, any> {
 
-    onFavorite = (listing: AppState['data'][0]) => () => {
+    onFavorite = (listing: Listing) => () => {
         return this.props.appState.toggleFavorite(listing);
     }
 
-    getListings(): AppState['data'] {
+    onImageClick = (listing: Listing) => () => this.props.appState.viewListing(listing);
+
+    getListings(): Listing[] {
         throw new Error('getListings must be implemented.');
     }
 
@@ -31,12 +35,20 @@ export abstract class Listings extends React.Component<{ appState: AppState, par
         return this.listings.slice(start, end);
     }
 
+    componentDidUpdate() {
+        if (this.page !== 1 && this.visibleListings.length === 0) {
+            history.pushState(null, '', '/1');
+        }
+    }
+
+
     render() {
+        const { appState } = this.props;
         return (
             <div>
                 <div className={styles.home}>
                     <div className={styles.left}>
-                        {this.props.appState.query && React.createElement(this.props.appState.query.component)}
+                        {appState.query && React.createElement(appState.query.component)}
                     </div>
                     <div className={styles.right}>
                         <div className={styles.pagination}>
@@ -63,7 +75,7 @@ export abstract class Listings extends React.Component<{ appState: AppState, par
                                     return <tr key={result.Id} onClick={this.onFavorite(result)} className={`${isFavorite ? styles.favorite : ''} ${styles.row}`}>
                                         <td><input type="checkbox" readOnly checked={isFavorite} /></td>
                                         <td>{result.Property.Address.AddressText}</td>
-                                        <td className={styles.mapColumn}>
+                                        <td onClick={e => { e.stopPropagation(); e.preventDefault(); }} className={styles.mapColumn}>
                                             <Map markers={[{
                                                 position: {
                                                     lng: Number(result.Property.Address.Longitude),
@@ -71,7 +83,7 @@ export abstract class Listings extends React.Component<{ appState: AppState, par
                                                 }
                                             }]} />
                                         </td>
-                                        <td>{result.Property.Photo && <img src={result.Property.Photo[0].LowResPath} />}</td>
+                                        <td>{result.Property.Photo && <img className={styles.listingImage} src={result.Property.Photo[0].LowResPath} />}</td>
                                         <td>{result.Property.Price}</td>
                                         <td>{result.PublicRemarks}</td>
                                         <td><a onClick={e => e.stopPropagation()} target="_blank" href={`http://realtor.ca${result.RelativeDetailsURL}`}>{result.MlsNumber}</a></td>
