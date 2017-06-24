@@ -57,3 +57,19 @@
         margin: 0 10px;
     }
 }
+
+.mapColumn {
+    width: 200px;
+    height: 200px;
+}
+
+.pagination {
+    position: fixed;
+    top: 0;
+    background: #fff;
+    z-index: 999;
+}
+
+.pageLink {
+    margin: 0 5px;
+}

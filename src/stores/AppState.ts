@@ -5,6 +5,7 @@ import { Query } from './QueryComponents';
 
 export interface AppStateProps {
   data: Listing[];
+  query: Query<Listing> | null;
 }
 
 /*
@@ -46,8 +47,12 @@ class AppState implements AppStateProps {
     return stored ? JSON.parse(stored) : null;
   }
 
-  constructor() {
-    this.getData();
+  constructor(appState?: AppStateProps) {
+    if (appState) {
+      this.reload(appState);
+    } else {
+      this.getData();
+    }
     this.getSavedState();
     autorun(() => {
       this.setSavedState();
@@ -100,12 +105,15 @@ class AppState implements AppStateProps {
   }
 
   reload(store?: AppStateProps) {
-    if (store) this.data = store.data;
+    if (store) {
+      this.data = store.data;
+      this.query = store.query;
+    }
     return this;
   }
 
   unload() {
-    this.disposer();
+    if (this.disposer) this.disposer();
   }
 }
 

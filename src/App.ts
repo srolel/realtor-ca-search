@@ -21,7 +21,7 @@ class App {
 
     // we optionally reload the state useful for hot reload and server-side rendering,
     // but also as an extension point for restoring the data from localStorage.
-    this.appState = new AppState().reload(appState);
+    this.appState = new AppState(appState);
 
     // initialize our router, or optionally pass it to the constructor
     if (!router) {
@@ -30,7 +30,6 @@ class App {
     } else {
       this.router = router;
     }
-
     this.hookHistory();
   }
 

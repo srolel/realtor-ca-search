@@ -33,11 +33,18 @@ export const defaultRoute: Route = {
   route: '/',
   async getComponent(appState, params) {
     const Home = await getRoute(System.import('./components/Home'));
-    return <Home appState={appState} />;
+    return <Home appState={appState} params={Object.assign({ page: '1' }, params)} />;
   }
 };
 
 routes = [{
+  name: 'Pages',
+  route: '/:page',
+  async getComponent(appState, params) {
+    const Home = await getRoute(System.import('./components/Home'));
+    return <Home appState={appState} params={Object.assign({ page: '1' }, params)} />;
+  }
+}, {
   name: 'Favorites',
   route: '/favorites',
   async getComponent(appState, params) {
