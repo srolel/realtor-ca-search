@@ -1,68 +1,149 @@
-'use strict';
+"use strict";
 
-const request = require('request-promise');
+const request = require("request-promise");
+const querystring = require("querystring");
 
-const MAP_URL = 'https://www.realtor.ca/Residential/Map.aspx';
-const API_URL = 'https://api2.realtor.ca/Listing.svc/PropertySearch_Post';
+const MAP_URL = "https://www.realtor.ca/Residential/Map.aspx";
+const API_URL = "https://api.realtor.ca";
+const clientSettingsDefaults = {
+  CultureId: 1,
+  ApplicationId: 37,
+};
 
-const priceTiers = [0, 25000, 50000, 75000, 100000, 125000, 150000, 175000, 200000, 225000, 250000, 275000, 300000, 325000, 350000, 375000, 400000, 425000, 450000, 475000, 500000, 550000, 600000, 650000, 700000, 750000, 800000, 850000, 900000, 950000, 1000000, 1100000, 1200000, 1300000, 1400000, 1500000, 1600000, 1700000, 1800000, 1900000, 2000000, 2500000, 3000000, 4000000, 5000000, 7500000, 10000000];
+const priceTiers = [
+  0,
+  25000,
+  50000,
+  75000,
+  100000,
+  125000,
+  150000,
+  175000,
+  200000,
+  225000,
+  250000,
+  275000,
+  300000,
+  325000,
+  350000,
+  375000,
+  400000,
+  425000,
+  450000,
+  475000,
+  500000,
+  550000,
+  600000,
+  650000,
+  700000,
+  750000,
+  800000,
+  850000,
+  900000,
+  950000,
+  1000000,
+  1100000,
+  1200000,
+  1300000,
+  1400000,
+  1500000,
+  1600000,
+  1700000,
+  1800000,
+  1900000,
+  2000000,
+  2500000,
+  3000000,
+  4000000,
+  5000000,
+  7500000,
+  10000000,
+];
 
 class Realtor {
-	static post(options) {
-		let form = {CultureId: 1, ApplicationId: 1, PropertySearchTypeId: 1};
+  static post(options) {
+    let optionDefaults = {
+      ...clientSettingsDefaults,
+      PropertySearchTypeId: 1,
+    };
+    let form;
 
-		if (typeof options === 'object')
-			Object.assign(form, options);
+    if (typeof options === "object")
+      form = Object.assign(optionDefaults, options);
 
-		return request({
-			method: 'POST',
-			uri: API_URL,
-			form: form,
-			json: true
-		});
-	}
+    return request({
+      method: "POST",
+      uri: API_URL + "/Listing.svc/PropertySearch_Post",
+      form: form,
+      json: true,
+    });
+  }
 
-	static buildUrl(options) {
+  static getPropertyDetails(options = {}) {
+    let optionDefaults = {
+      ...clientSettingsDefaults,
+      HashCode: 0,
+    };
+    let params = {};
+    let url = "";
 
-		if (options.PriceMin) {
-			options = findNextPriceTier(options, true);
-		}
+    params = Object.assign(optionDefaults, options);
 
-		if (options.PriceMax) {
-			options = findNextPriceTier(options, false);
-		}
+    url =
+      API_URL + "/Listing.svc/PropertyDetails?" + querystring.encode(params);
 
-		let qs = '#';
+    return request({
+      uri: url,
+      json: true,
+    });
+  }
 
-		for (var prop in options) {
-			qs += prop + '=' + options[prop] + '&';
-		}
+  static buildUrl(options) {
+    if (options.PriceMin) {
+      options = findNextPriceTier(options, true);
+    }
 
-		return MAP_URL + qs.slice(0, -1); //To remove trailing ampersand or pound
-	}
+    if (options.PriceMax) {
+      options = findNextPriceTier(options, false);
+    }
+
+    let qs = "#";
+
+    for (let prop in options) {
+      qs += prop + "=" + options[prop] + "&";
+    }
+
+    return MAP_URL + qs.slice(0, -1); //To remove trailing ampersand or pound
+  }
+
+  /**
+   * Given a URL from realtor.ca, attemtps to parse the query string parameters into a usable filter option set.
+   * @param {string} url The realtor.ca URL string that represents the filters
+   */
+  static optionsFromUrl(url) {
+    return querystring.parse(url);
+  }
 }
 
 function findNextPriceTier(options, minFlag) {
+  let opt = minFlag ? "PriceMin" : "PriceMax";
+  let cost = options[opt];
 
-	let opt = (minFlag ? "PriceMin" : "PriceMax");
-	let cost = options[opt];
+  if (priceTiers.indexOf(cost) !== -1) return options;
 
-	if (priceTiers.indexOf(cost) !== -1)
-		return options;
+  if (cost > priceTiers[priceTiers.length - 1]) {
+    delete options[opt];
+    return options;
+  }
 
-	if (cost > priceTiers[priceTiers.length-1]) {
-		delete options[opt];
-		return options;
-	}
+  for (let i = 0; i < priceTiers.length; i++) {
+    if (priceTiers[i] > options[opt]) {
+      options[opt] = priceTiers[i];
+      break;
+    }
+  }
 
-	for (let i = 0; i < priceTiers.length; i++) {
-		if (priceTiers[i] > options[opt]) {
-			options[opt] = priceTiers[i];
-			break;
-		}
-	}
-
-	return options;
+  return options;
 }
 
 module.exports = Realtor;
